@@ -15,6 +15,9 @@ Projects tree as **Uzzo Knowledge Base**.
   Icons 2 icons. Any other folder is shown as a plain folder.
 - **Dedicated deck** – documents opened from inside `uzz` are docked into a
   separate editor deck on the right of the IDE instead of the central editor deck.
+- **External changes** – the knowledge base is refreshed when a folder is
+  expanded, and the **Refresh Knowledge Base** action refreshes the whole tree.
+  This makes files created by external tools visible without restarting the IDE.
 
 ## Requirements
 

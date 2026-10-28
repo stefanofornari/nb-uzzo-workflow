@@ -1,0 +1,47 @@
+# Project Name: Uzzo Workflow for Netbeans
+**Version:** 1.0-SNAPSHOT
+
+## Overall Description
+
+A NetBeans module that integrates the Uzzo knowledge base into the IDE for Maven projects. It surfaces the project's top-level `uzz` directory in the Projects tree, decorates the knowledge base sections, and redirects documents opened from the knowledge base into a dedicated editor deck.
+
+Functional domains:
+- **Knowledge Base Node**: surface the project's `uzz` folder in the NetBeans logical view and keep it in sync with the file system.
+- **Section Presentation**: give the `library`, `project`, `skills`, and `stories` folders their dedicated icons while keeping normal folder behaviour.
+- **Dedicated Editor Deck**: dock documents opened from inside `uzz` into a separate editor deck on the right of the IDE.
+
+## In-Scope Capabilities
+
+* **Knowledge Base Node**:
+  - [ ] Show an **Uzzo Knowledge Base** node for Maven projects that contain a top-level `uzz` folder.
+  - [ ] Add, remove, and update the node when the `uzz` folder is created, deleted, or renamed.
+  - [ ] Refresh the knowledge base from the Projects view so content created or deleted outside NetBeans becomes visible.
+
+* **Section Presentation**:
+  - [ ] Render `library`, `project`, `skills`, and `stories` with their Material Design 2 icons.
+  - [ ] Keep unchanged folders displayed as plain folder nodes.
+
+* **Dedicated Editor Deck**:
+  - [ ] Dock editors for files under `uzz` into the `uzzoKnowledgeBase` deck.
+  - [ ] Leave editors outside the knowledge base in the central editor deck.
+
+## Out-of-Scope / Future Enhancements
+
+* [Feature or behaviour explicitly excluded from the current cycle]
+* [Deferred idea that would cause scope creep]
+
+## Technical Context & Infrastructure
+
+* **Development Toolchain**: Java 17 + Maven, NetBeans Platform `RELEASE280`, Ikonli 12.3.1, JUnit 5
+* **Target Systems/Platforms**: NetBeans IDE (module packaged as `nbm`), Maven projects
+* **Project Reference Docs**:
+  - Project Overview: `uzz/project/overview.md`
+  - Coding Standard: `uzz/project/coding_standard.md`
+  - Development Framework: `uzz/project/development_framework.md`
+
+### Keywords
+- scope
+- requirements
+- boundaries
+- in-scope
+- out-of-scope

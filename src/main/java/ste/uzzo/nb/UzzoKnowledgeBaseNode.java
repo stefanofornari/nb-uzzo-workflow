@@ -1,6 +1,8 @@
 package ste.uzzo.nb;
 
 import java.awt.Image;
+import java.util.Arrays;
+import javax.swing.Action;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataFolder;
 import org.openide.nodes.FilterNode;
@@ -17,20 +19,34 @@ final class UzzoKnowledgeBaseNode extends FilterNode {
 
     private static final String ICON = "ste/uzzo/nb/lamp.png";
 
+    private final Action refreshAction;
+
     @Messages("UzzoKnowledgeBaseNode.displayName=Uzzo Knowledge Base")
     UzzoKnowledgeBaseNode(FileObject uzzDir) {
-        this(DataFolder.findFolder(uzzDir).getNodeDelegate());
+        this(uzzDir, DataFolder.findFolder(uzzDir).getNodeDelegate());
     }
 
-    private UzzoKnowledgeBaseNode(Node delegate) {
-        super(delegate, new FilterNode.Children(delegate) {
+    private UzzoKnowledgeBaseNode(FileObject uzzDir, Node delegate) {
+        super(delegate, new RefreshingChildren(delegate) {
             @Override
             protected Node copyNode(Node original) {
+                if (original.getCookie(DataFolder.class) == null) {
+                    return new FilterNode(original);
+                }
                 return SectionNode.wrap(original);
             }
         });
+        this.refreshAction = new RefreshKnowledgeBaseAction(uzzDir);
         disableDelegation(DELEGATE_SET_DISPLAY_NAME | DELEGATE_GET_DISPLAY_NAME);
         super.setDisplayName(Bundle.UzzoKnowledgeBaseNode_displayName());
+    }
+
+    @Override
+    public Action[] getActions(boolean context) {
+        Action[] actions = super.getActions(context);
+        Action[] result = Arrays.copyOf(actions, actions.length + 1);
+        result[actions.length] = refreshAction;
+        return result;
     }
 
     @Override

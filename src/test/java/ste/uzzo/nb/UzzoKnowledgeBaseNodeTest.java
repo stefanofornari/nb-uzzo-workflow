@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,15 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class UzzoKnowledgeBaseNodeTest {
 
     private UzzoKnowledgeBaseNode node;
+    private FileObject uzzDir;
 
     @BeforeEach
     void setUp() throws IOException {
         FileObject root = FileUtil.createMemoryFileSystem().getRoot();
         FileObject uzz = root.createFolder("uzz");
+        uzzDir = uzz;
         for (String name : new String[]{"library", "project", "skills", "stories", "misc"}) {
             uzz.createFolder(name);
         }
@@ -70,6 +74,24 @@ class UzzoKnowledgeBaseNodeTest {
         Map<String, Node> children = children();
 
         assertFalse(children.get("misc") instanceof SectionNode);
+    }
+
+    @Test
+    void nestedFoldersWithSectionNamesAreNotDecorated() throws IOException {
+        uzzDir.getFileObject("stories").createFolder("project");
+
+        Node nested = children().get("stories").getChildren().findChild("project");
+
+        assertNotNull(nested);
+        assertFalse(nested instanceof SectionNode);
+    }
+
+    @Test
+    void filesRemainLeafNodes() {
+        Node readme = children().get("readme.txt");
+
+        assertNotNull(readme);
+        assertSame(Children.LEAF, readme.getChildren());
     }
 
     private Map<String, Node> children() {

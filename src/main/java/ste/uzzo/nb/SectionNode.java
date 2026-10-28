@@ -29,14 +29,16 @@ final class SectionNode extends FilterNode {
     private final Image icon;
 
     private SectionNode(Node original, Ikon ikon) {
-        super(original);
+        super(original, new RefreshingChildren(original));
         this.icon = render(ikon);
     }
 
     /** Returns a SectionNode for a known section folder, a plain copy otherwise. */
     static Node wrap(Node original) {
         Ikon ikon = ICONS.get(original.getName());
-        return ikon == null ? new FilterNode(original) : new SectionNode(original, ikon);
+        return ikon == null
+                ? new FilterNode(original, new RefreshingChildren(original))
+                : new SectionNode(original, ikon);
     }
 
     @Override
