@@ -1,0 +1,1 @@
+OpenIDE-Module-Layer: ste/uzzo/nb/layer.xml

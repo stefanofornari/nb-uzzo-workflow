@@ -10,7 +10,6 @@ release.properties
 # NetBeans
 nbproject/private/
 nbactions*.xml
-nb-configuration.xml
 build/
 dist/
 nbbuild/

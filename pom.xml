@@ -5,17 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.uzzo</groupId>
-    <artifactId>uzzo-knowledge-base</artifactId>
+    <artifactId>nb-uzzo-workflow</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>nbm</packaging>
 
-    <name>Uzzo Knowledge Base</name>
+    <name>Uzzo Workflow for Netbeans</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
         <netbeans.version>RELEASE280</netbeans.version>
         <ikonli.version>12.3.1</ikonli.version>
+        <junit.version>5.10.2</junit.version>
     </properties>
 
     <dependencies>
@@ -79,6 +80,24 @@
             <artifactId>org-openide-util-ui</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-windows</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stefanofornari</groupId>
+            <artifactId>nb-xtest-double</artifactId>
+            <version>0.0.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -92,6 +111,17 @@
                     <publicPackages>
                         <publicPackage>ste.uzzo.nb</publicPackage>
                     </publicPackages>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.awt.headless>true</java.awt.headless>
+                    </systemPropertyVariables>
+                    <argLine>--add-opens java.base/java.net=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
             <plugin>
