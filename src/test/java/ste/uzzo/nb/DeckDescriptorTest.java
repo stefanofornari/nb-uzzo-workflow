@@ -13,9 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  * Guards the window-system descriptors, which fail silently at runtime: when the
@@ -31,40 +29,40 @@ class DeckDescriptorTest {
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         DocumentBuilder builder = factory.newDocumentBuilder();
         try (InputStream in = DeckDescriptorTest.class.getResourceAsStream(resource)) {
-            assertNotNull(in, "missing resource " + resource);
+            then(in).as("missing resource %s", resource).isNotNull();
             return builder.parse(in);
         }
     }
 
     @Test
-    void modeNameMatchesTheNameTheHookLooksUp() throws Exception {
+    void mode_name_matches_the_name_the_hook_looks_up() throws Exception {
         Element mode = parse(BASE + "uzzoKnowledgeBase.wsmode").getDocumentElement();
 
-        assertEquals("mode", mode.getTagName());
+        then(mode.getTagName()).isEqualTo("mode");
         Element name = (Element) mode.getElementsByTagName("name").item(0);
-        assertEquals(UzzoDeckHook.MODE_NAME, name.getAttribute("unique"));
+        then(name.getAttribute("unique")).isEqualTo(UzzoDeckHook.MODE_NAME);
     }
 
     @Test
-    void modeIsAnEditorDeckThatStaysWhenEmpty() throws Exception {
+    void mode_is_an_editor_deck_that_stays_when_empty() throws Exception {
         Element mode = parse(BASE + "uzzoKnowledgeBase.wsmode").getDocumentElement();
 
         Element kind = (Element) mode.getElementsByTagName("kind").item(0);
         Element empty = (Element) mode.getElementsByTagName("empty-behavior").item(0);
-        assertEquals("editor", kind.getAttribute("type"));
-        assertEquals("true", empty.getAttribute("permanent"));
+        then(kind.getAttribute("type")).isEqualTo("editor");
+        then(empty.getAttribute("permanent")).isEqualTo("true");
     }
 
     @Test
-    void modeUsesAFormatVersionNetBeansUnderstands() throws Exception {
+    void mode_uses_a_format_version_netbeans_understands() throws Exception {
         // 2.4 was rejected by NetBeans 31 ("Cannot parse configuration of mode"), 2.3 is accepted.
         Element mode = parse(BASE + "uzzoKnowledgeBase.wsmode").getDocumentElement();
 
-        assertEquals("2.3", mode.getAttribute("version"));
+        then(mode.getAttribute("version")).isEqualTo("2.3");
     }
 
     @Test
-    void layerRegistersTheModeFileAndItExists() throws Exception {
+    void layer_registers_the_mode_file_and_it_exists() throws Exception {
         Document layer = parse(BASE + "layer.xml");
 
         NodeList files = layer.getElementsByTagName("file");
@@ -75,14 +73,16 @@ class DeckDescriptorTest {
                 url = file.getAttribute("url");
             }
         }
-        assertNotNull(url, "layer.xml does not register uzzoKnowledgeBase.wsmode");
-        assertNotNull(DeckDescriptorTest.class.getResource(BASE + url), "layer url does not resolve: " + url);
+        then(url).as("layer.xml does not register uzzoKnowledgeBase.wsmode").isNotNull();
+        then(DeckDescriptorTest.class.getResource(BASE + url))
+                .as("layer url does not resolve: %s", url)
+                .isNotNull();
     }
 
     @Test
-    void manifestPointsAtTheLayer() throws IOException {
+    void manifest_points_at_the_layer() throws IOException {
         String manifest = Files.readString(Path.of("src/main/nbm/manifest.mf"));
 
-        assertTrue(manifest.contains("OpenIDE-Module-Layer: ste/uzzo/nb/layer.xml"), manifest);
+        then(manifest).contains("OpenIDE-Module-Layer: ste/uzzo/nb/layer.xml");
     }
 }

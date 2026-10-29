@@ -1,7 +1,6 @@
 package ste.uzzo.nb;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 import org.junit.jupiter.api.AfterEach;
@@ -12,10 +11,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.nodes.Node;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.BDDAssertions.then;
 
 class UzzoKnowledgeBaseNodeFactoryTest {
 
@@ -35,55 +31,55 @@ class UzzoKnowledgeBaseNodeFactoryTest {
     }
 
     @Test
-    void noKeysWithoutUzzFolder() {
-        assertEquals(List.of(), nodes.keys());
+    void no_keys_without_uzz_folder() {
+        then(nodes.keys()).isEmpty();
     }
 
     @Test
-    void oneKeyWhenUzzFolderExists() throws IOException {
+    void one_key_when_uzz_folder_exists() throws IOException {
         projectDir.createFolder("uzz");
 
-        assertEquals(List.of("uzz"), nodes.keys());
+        then(nodes.keys()).containsExactly("uzz");
     }
 
     @Test
-    void noKeysWhenUzzIsAFileNotAFolder() throws IOException {
+    void no_keys_when_uzz_is_a_file_not_a_folder() throws IOException {
         projectDir.createData("uzz");
 
-        assertEquals(List.of(), nodes.keys());
+        then(nodes.keys()).isEmpty();
     }
 
     @Test
-    void nodeIsTheKnowledgeBaseNode() throws IOException {
+    void node_is_the_knowledge_base_node() throws IOException {
         projectDir.createFolder("uzz");
 
         Node node = nodes.node("uzz");
 
-        assertInstanceOf(UzzoKnowledgeBaseNode.class, node);
-        assertEquals("Uzzo Knowledge Base", node.getDisplayName());
+        then(node).isInstanceOf(UzzoKnowledgeBaseNode.class);
+        then(node.getDisplayName()).isEqualTo("Uzzo Knowledge Base");
     }
 
     @Test
-    void noNodeForAMissingFolder() {
-        assertNull(nodes.node("uzz"));
+    void no_node_for_a_missing_folder() {
+        then(nodes.node("uzz")).isNull();
     }
 
     @Test
-    void firesChangeWhenUzzFolderIsCreatedAndDeleted() throws IOException {
+    void fires_change_when_uzz_folder_is_created_and_deleted() throws IOException {
         AtomicInteger changes = new AtomicInteger();
         nodes.addNotify();
         nodes.addChangeListener(e -> changes.incrementAndGet());
 
         FileObject uzz = projectDir.createFolder("uzz");
-        assertTrue(waitFor(() -> changes.get() >= 1), "no change event on create");
+        then(waitFor(() -> changes.get() >= 1)).as("no change event on create").isTrue();
 
         int afterCreate = changes.get();
         uzz.delete();
-        assertTrue(waitFor(() -> changes.get() > afterCreate), "no change event on delete");
+        then(waitFor(() -> changes.get() > afterCreate)).as("no change event on delete").isTrue();
     }
 
     @Test
-    void ignoresOtherFoldersAppearing() throws IOException {
+    void ignores_other_folders_appearing() throws IOException {
         AtomicInteger changes = new AtomicInteger();
         nodes.addNotify();
         nodes.addChangeListener(e -> changes.incrementAndGet());
@@ -91,7 +87,7 @@ class UzzoKnowledgeBaseNodeFactoryTest {
         projectDir.createFolder("src");
         projectDir.createFolder("target");
 
-        assertEquals(0, changes.get());
+        then(changes.get()).isZero();
     }
 
     private static boolean waitFor(BooleanSupplier condition) {

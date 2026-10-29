@@ -10,12 +10,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.assertj.core.api.BDDAssertions.then;
 
 class UzzoKnowledgeBaseNodeTest {
 
@@ -35,63 +30,91 @@ class UzzoKnowledgeBaseNodeTest {
     }
 
     @Test
-    void displayNameIsTheKnowledgeBaseLabel() {
-        assertEquals("Uzzo Knowledge Base", node.getDisplayName());
+    void display_name_is_the_knowledge_base_label() {
+        then(node.getDisplayName()).isEqualTo("Uzzo Knowledge Base");
     }
 
     @Test
-    void hasTheLampIconForBothStates() {
-        assertNotNull(node.getIcon(0));
-        assertNotNull(node.getOpenedIcon(0));
+    void has_the_lamp_icon_for_both_states() {
+        then(node.getIcon(0)).isNotNull();
+        then(node.getOpenedIcon(0)).isNotNull();
     }
 
     @Test
-    void cannotBeRenamedAndHasNoHtmlName() {
-        assertFalse(node.canRename());
-        assertNull(node.getHtmlDisplayName());
+    void cannot_be_renamed_and_has_no_html_name() {
+        then(node.canRename()).isFalse();
+        then(node.getHtmlDisplayName()).isNull();
     }
 
     @Test
-    void childrenAreTheContentOfTheFolder() {
+    void children_are_the_content_of_the_folder() {
         Map<String, Node> children = children();
 
         // 5 sub-folders + readme.txt
-        assertEquals(6, node.getChildren().getNodesCount(true));
-        assertNotNull(children.get("misc"));
+        then(node.getChildren().getNodesCount(true)).isEqualTo(6);
+        then(children.get("misc")).isNotNull();
     }
 
     @Test
-    void sectionFoldersGetSectionNodes() {
+    void section_folders_get_section_nodes() {
         Map<String, Node> children = children();
 
         for (String section : new String[]{"library", "project", "skills", "stories"}) {
-            assertInstanceOf(SectionNode.class, children.get(section), section);
+            then(children.get(section)).as(section).isInstanceOf(SectionNode.class);
         }
     }
 
     @Test
-    void otherChildrenAreNotSectionNodes() {
+    void other_children_are_not_section_nodes() {
         Map<String, Node> children = children();
 
-        assertFalse(children.get("misc") instanceof SectionNode);
+        then(children.get("misc")).isNotInstanceOf(SectionNode.class);
     }
 
     @Test
-    void nestedFoldersWithSectionNamesAreNotDecorated() throws IOException {
+    void nested_folders_with_section_names_are_not_decorated() throws IOException {
         uzzDir.getFileObject("stories").createFolder("project");
 
         Node nested = children().get("stories").getChildren().findChild("project");
 
-        assertNotNull(nested);
-        assertFalse(nested instanceof SectionNode);
+        then(nested).isNotNull();
+        then(nested).isNotInstanceOf(SectionNode.class);
     }
 
     @Test
-    void filesRemainLeafNodes() {
+    void files_remain_leaf_nodes() {
         Node readme = children().get("readme.txt");
 
-        assertNotNull(readme);
-        assertSame(Children.LEAF, readme.getChildren());
+        then(readme).isNotNull();
+        then(readme.getChildren()).isSameAs(Children.LEAF);
+    }
+
+    @Test
+    void ignored_entries_are_hidden_at_the_root() throws IOException {
+        uzzDir.createData(".gitkeep");
+        uzzDir.createData("Thumbs.db");
+        uzzDir.createData("draft.md.bak");
+        uzzDir.createFolder(".git");
+
+        then(node.getChildren().getNodesCount(true)).isEqualTo(6);
+
+        uzzDir.createData("visible.notes.md");
+
+        then(node.getChildren().getNodesCount(true)).isEqualTo(7);
+    }
+
+    @Test
+    void ignored_entries_are_hidden_in_nested_folders() throws IOException {
+        FileObject stories = uzzDir.getFileObject("stories");
+        stories.createData(".gitkeep");
+        stories.createData("desktop.ini");
+        stories.createData("US-000001.md");
+        stories.createFolder("cache.tmp");
+
+        Node storiesNode = children().get("stories");
+
+        then(storiesNode.getChildren().getNodesCount(true)).isEqualTo(1);
+        then(storiesNode.getChildren().getNodes(true)[0].getName()).isEqualTo("US-000001.md");
     }
 
     private Map<String, Node> children() {

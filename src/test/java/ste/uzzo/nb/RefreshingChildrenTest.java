@@ -9,8 +9,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.openide.filesystems.FileUtil;
 import org.openide.nodes.Node;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.BDDAssertions.then;
 
 class RefreshingChildrenTest {
 
@@ -31,23 +30,23 @@ class RefreshingChildrenTest {
     }
 
     @Test
-    void refreshesNestedFolderWhenNodesAreRequested() throws IOException {
+    void refreshes_nested_folder_when_nodes_are_requested() throws IOException {
         createSecondStory();
-        assertNull(projectNode.getChildren().findChild("US-000002"));
+        then(projectNode.getChildren().findChild("US-000002")).isNull();
 
         projectNode.getChildren().getNodes(true);
 
-        assertNotNull(projectNode.getChildren().findChild("US-000002"));
+        then(projectNode.getChildren().findChild("US-000002")).isNotNull();
     }
 
     @Test
-    void refreshesNestedFolderWhenTheNodeCountIsRequested() throws IOException {
+    void refreshes_nested_folder_when_the_node_count_is_requested() throws IOException {
         createSecondStory();
-        assertNull(projectNode.getChildren().findChild("US-000002"));
+        then(projectNode.getChildren().findChild("US-000002")).isNull();
 
         projectNode.getChildren().getNodesCount(true);
 
-        assertNotNull(projectNode.getChildren().findChild("US-000002"));
+        then(projectNode.getChildren().findChild("US-000002")).isNotNull();
     }
 
     private void createSecondStory() throws IOException {
@@ -57,9 +56,9 @@ class RefreshingChildrenTest {
 
     private static Node projectNode(UzzoKnowledgeBaseNode node) {
         Node stories = node.getChildren().findChild("stories");
-        assertNotNull(stories, "stories child missing");
+        then(stories).as("stories child missing").isNotNull();
         Node project = stories.getChildren().findChild("project");
-        assertNotNull(project, "project child missing");
+        then(project).as("project child missing").isNotNull();
         return project;
     }
 }

@@ -10,11 +10,7 @@ import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.BDDAssertions.then;
 
 class SectionNodeTest {
 
@@ -25,7 +21,8 @@ class SectionNodeTest {
     }
 
     private static boolean hasVisiblePixels(Image image) {
-        BufferedImage img = assertInstanceOf(BufferedImage.class, image);
+        then(image).isInstanceOf(BufferedImage.class);
+        BufferedImage img = (BufferedImage) image;
         for (int y = 0; y < img.getHeight(); y++) {
             for (int x = 0; x < img.getWidth(); x++) {
                 if ((img.getRGB(x, y) >>> 24) != 0) {
@@ -38,32 +35,32 @@ class SectionNodeTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"library", "project", "skills", "stories"})
-    void knownSectionsGetAnIconNode(String name) {
+    void known_sections_get_an_icon_node(String name) {
         Node wrapped = SectionNode.wrap(nodeNamed(name));
 
-        assertInstanceOf(SectionNode.class, wrapped);
-        assertEquals(name, wrapped.getName());
+        then(wrapped).isInstanceOf(SectionNode.class);
+        then(wrapped.getName()).isEqualTo(name);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"library", "project", "skills", "stories"})
-    void sectionIconIsRenderedAt16px(String name) {
+    void section_icon_is_rendered_at_16px(String name) {
         Image icon = SectionNode.wrap(nodeNamed(name)).getIcon(0);
 
-        assertEquals(16, icon.getWidth(null));
-        assertEquals(16, icon.getHeight(null));
-        assertTrue(hasVisiblePixels(icon), "icon for '" + name + "' is blank");
+        then(icon.getWidth(null)).isEqualTo(16);
+        then(icon.getHeight(null)).isEqualTo(16);
+        then(hasVisiblePixels(icon)).as("icon for '%s' is blank", name).isTrue();
     }
 
     @Test
-    void openedIconIsTheSameAsClosedIcon() {
+    void opened_icon_is_the_same_as_closed_icon() {
         Node node = SectionNode.wrap(nodeNamed("library"));
 
-        assertEquals(node.getIcon(0), node.getOpenedIcon(0));
+        then(node.getOpenedIcon(0)).isSameAs(node.getIcon(0));
     }
 
     @Test
-    void sectionsHaveDistinctIcons() {
+    void sections_have_distinct_icons() {
         BufferedImage library = (BufferedImage) SectionNode.wrap(nodeNamed("library")).getIcon(0);
         BufferedImage skills = (BufferedImage) SectionNode.wrap(nodeNamed("skills")).getIcon(0);
 
@@ -73,18 +70,18 @@ class SectionNodeTest {
                 differ = library.getRGB(x, y) != skills.getRGB(x, y);
             }
         }
-        assertTrue(differ, "library and skills render the same icon");
+        then(differ).as("library and skills render the same icon").isTrue();
     }
 
     @Test
-    void otherFoldersAreWrappedButKeepTheirOwnIcon() {
+    void other_folders_are_wrapped_but_keep_their_own_icon() {
         Node original = nodeNamed("misc");
 
         Node wrapped = SectionNode.wrap(original);
 
-        assertFalse(wrapped instanceof SectionNode);
-        assertInstanceOf(FilterNode.class, wrapped);
-        assertNotSame(original, wrapped);
-        assertEquals("misc", wrapped.getName());
+        then(wrapped).isNotInstanceOf(SectionNode.class);
+        then(wrapped).isInstanceOf(FilterNode.class);
+        then(wrapped).isNotSameAs(original);
+        then(wrapped.getName()).isEqualTo("misc");
     }
 }

@@ -16,6 +16,7 @@ Functional domains:
   - [ ] Show an **Uzzo Knowledge Base** node for Maven projects that contain a top-level `uzz` folder.
   - [ ] Add, remove, and update the node when the `uzz` folder is created, deleted, or renamed.
   - [ ] Refresh the knowledge base from the Projects view so content created or deleted outside NetBeans becomes visible.
+  - [ ] Hide meta, OS, editor, and temporary files from the knowledge base tree.
 
 * **Section Presentation**:
   - [ ] Render `library`, `project`, `skills`, and `stories` with their Material Design 2 icons.

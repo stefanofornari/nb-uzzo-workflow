@@ -11,9 +11,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.nodes.Node;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.BDDAssertions.then;
 
 class RefreshKnowledgeBaseActionTest {
 
@@ -21,7 +19,7 @@ class RefreshKnowledgeBaseActionTest {
     Path tempDir;
 
     @Test
-    void refreshesFoldersNestedBelowTheKnowledgeBase() throws IOException {
+    void refreshes_folders_nested_below_the_knowledge_base() throws IOException {
         Path project = Files.createDirectories(tempDir.resolve("uzz/stories/project"));
         Files.writeString(project.resolve("US-000001.md"), "one");
         FileObject uzzDir = FileUtil.toFileObject(tempDir.resolve("uzz").toFile());
@@ -31,15 +29,15 @@ class RefreshKnowledgeBaseActionTest {
 
         Files.createDirectories(project.resolve("US-000002"));
         Files.writeString(project.resolve("US-000002/US-000002.md"), "two");
-        assertNull(projectNode.getChildren().findChild("US-000002"));
+        then(projectNode.getChildren().findChild("US-000002")).isNull();
 
         RefreshKnowledgeBaseAction.refreshRecursively(uzzDir);
 
-        assertNotNull(projectNode.getChildren().findChild("US-000002"));
+        then(projectNode.getChildren().findChild("US-000002")).isNotNull();
     }
 
     @Test
-    void knowledgeBaseNodeOffersTheRefreshAction() throws IOException {
+    void knowledge_base_node_offers_the_refresh_action() throws IOException {
         Path uzz = Files.createDirectories(tempDir.resolve("uzz"));
         UzzoKnowledgeBaseNode node = new UzzoKnowledgeBaseNode(
                 FileUtil.toFileObject(uzz.toFile()));
@@ -48,14 +46,14 @@ class RefreshKnowledgeBaseActionTest {
                 .map(action -> action.getValue(Action.NAME))
                 .anyMatch("Refresh Knowledge Base"::equals);
 
-        assertTrue(found, "Refresh Knowledge Base action missing");
+        then(found).as("Refresh Knowledge Base action missing").isTrue();
     }
 
     private static Node projectNode(UzzoKnowledgeBaseNode node) {
         Node stories = node.getChildren().findChild("stories");
-        assertNotNull(stories, "stories child missing");
+        then(stories).as("stories child missing").isNotNull();
         Node project = stories.getChildren().findChild("project");
-        assertNotNull(project, "project child missing");
+        then(project).as("project child missing").isNotNull();
         return project;
     }
 }

@@ -13,10 +13,7 @@ import org.openide.nodes.Node;
 import org.openide.util.lookup.Lookups;
 import org.openide.windows.TopComponent;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.BDDAssertions.then;
 
 class UzzoDeckHookTest {
 
@@ -40,65 +37,65 @@ class UzzoDeckHookTest {
     // --- isInKnowledgeBase -------------------------------------------------
 
     @Test
-    void fileInsideUzzBelongsToTheKnowledgeBase() {
-        assertTrue(UzzoDeckHook.isInKnowledgeBase(uzzDoc));
+    void file_inside_uzz_belongs_to_the_knowledge_base() {
+        then(UzzoDeckHook.isInKnowledgeBase(uzzDoc)).isTrue();
     }
 
     @Test
-    void fileOutsideUzzDoesNot() {
-        assertFalse(UzzoDeckHook.isInKnowledgeBase(sourceFile));
+    void file_outside_uzz_does_not() {
+        then(UzzoDeckHook.isInKnowledgeBase(sourceFile)).isFalse();
     }
 
     @Test
-    void fileWithoutOwnerDoesNot() {
+    void file_without_owner_does_not() {
         TestOwnerQuery.project = null;
 
-        assertFalse(UzzoDeckHook.isInKnowledgeBase(uzzDoc));
+        then(UzzoDeckHook.isInKnowledgeBase(uzzDoc)).isFalse();
     }
 
     @Test
-    void projectWithoutUzzFolderHasNoKnowledgeBase() throws IOException {
+    void project_without_uzz_folder_has_no_knowledge_base() throws IOException {
         FileObject other = FileUtil.createMemoryFileSystem().getRoot();
         FileObject file = other.createFolder("docs").createData("a.md");
         TestOwnerQuery.project = new TestProject(other);
 
-        assertFalse(UzzoDeckHook.isInKnowledgeBase(file));
+        then(UzzoDeckHook.isInKnowledgeBase(file)).isFalse();
     }
 
     @Test
-    void aFileNamedLikeUzzButOutsideTheFolderDoesNot() throws IOException {
+    void a_file_named_like_uzz_but_outside_the_folder_does_not() throws IOException {
         FileObject lookalike = root.createFolder("src2").createFolder("uzz").createData("x.md");
 
-        assertFalse(UzzoDeckHook.isInKnowledgeBase(lookalike));
+        then(UzzoDeckHook.isInKnowledgeBase(lookalike)).isFalse();
     }
 
     // --- fileOf ------------------------------------------------------------
 
     @Test
-    void fileComesFromTheDataObjectInTheLookup() throws IOException {
+    void file_comes_from_the_data_object_in_the_lookup() throws IOException {
         TopComponent tc = new TopComponent(Lookups.fixed(DataObject.find(uzzDoc)));
 
-        assertEquals(uzzDoc, UzzoDeckHook.fileOf(tc));
+        then(UzzoDeckHook.fileOf(tc)).isEqualTo(uzzDoc);
     }
 
     @Test
-    void fileComesFromAFileObjectInTheLookup() {
+    void file_comes_from_a_file_object_in_the_lookup() {
         TopComponent tc = new TopComponent(Lookups.fixed(uzzDoc));
 
-        assertEquals(uzzDoc, UzzoDeckHook.fileOf(tc));
+        then(UzzoDeckHook.fileOf(tc)).isEqualTo(uzzDoc);
     }
 
     @Test
-    void fileFallsBackToTheActivatedNodes() {
+    void file_falls_back_to_the_activated_nodes() {
         TopComponent tc = new TopComponent();
         Node node = new AbstractNode(Children.LEAF, Lookups.fixed(uzzDoc));
         tc.setActivatedNodes(new Node[]{node});
 
-        assertEquals(uzzDoc, UzzoDeckHook.fileOf(tc));
+        then(UzzoDeckHook.fileOf(tc)).isEqualTo(uzzDoc);
     }
 
     @Test
-    void fileIsNullWhenNothingExposesIt() {
-        assertNull(UzzoDeckHook.fileOf(new TopComponent()));
+    void file_is_null_when_nothing_exposes_it() {
+        then(UzzoDeckHook.fileOf(new TopComponent())).isNull();
     }
 }

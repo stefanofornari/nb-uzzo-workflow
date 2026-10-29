@@ -18,6 +18,10 @@ Projects tree as **Uzzo Knowledge Base**.
 - **External changes** – the knowledge base is refreshed when a folder is
   expanded, and the **Refresh Knowledge Base** action refreshes the whole tree.
   This makes files created by external tools visible without restarting the IDE.
+- **Clean tree** – hidden entries (names starting with `.`), OS metadata
+  (`Thumbs.db`, `desktop.ini`), editor files (`*~`, `*.swp`, `*.swo`, `*.swx`,
+  `.#*`, `#*#`) and temporary/backup files (`*.tmp`, `*.bak`) are omitted from
+  the tree. They stay on disk and remain available to other tools.
 
 ## Requirements
 

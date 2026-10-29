@@ -11,6 +11,7 @@
 | project/US-000001 | Show the Uzzo Knowledge Base in the Projects View | DONE |
 | project/US-000002 | Open Knowledge Base Documents in a Dedicated Editor Deck | DONE |
 | project/US-000003 | Refresh Knowledge Base Content from the Project View | DONE |
+| project/US-000004 | Hide Meta and Temporary Files from the Knowledge Base Tree | DONE |
 
 ### Keywords
 - stories
