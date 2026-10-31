@@ -12,6 +12,10 @@
 | project/US-000002 | Open Knowledge Base Documents in a Dedicated Editor Deck | DONE |
 | project/US-000003 | Refresh Knowledge Base Content from the Project View | DONE |
 | project/US-000004 | Hide Meta and Temporary Files from the Knowledge Base Tree | DONE |
+| project/US-000005 | Initialize the Knowledge Base from the Project Context Menu | DONE |
+| project/US-000006 | Seed the Knowledge Base from the Uzzo Workflow Distribution | TODO |
+| project/US-000007 | Pre-fill Project Facts from the Maven Project | TODO |
+| project/US-000008 | Repair an Incomplete Knowledge Base and Report the Outcome | TODO |
 
 ### Keywords
 - stories

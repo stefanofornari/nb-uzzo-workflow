@@ -13,7 +13,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <netbeans.version>RELEASE280</netbeans.version>
         <ikonli.version>12.3.1</ikonli.version>
         <junit.version>5.10.2</junit.version>
@@ -49,6 +49,16 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-projectuiapi-base</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-awt</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-dialogs</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
@@ -100,8 +110,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.stefanofornari</groupId>
-            <artifactId>nb-xtest-double</artifactId>
-            <version>0.0.0-SNAPSHOT</version>
+            <artifactId>xtest-netbeans</artifactId>
+            <version>0.0.0</version>
             <scope>test</scope>
         </dependency>
 
