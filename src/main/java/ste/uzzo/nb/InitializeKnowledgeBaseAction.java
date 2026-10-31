@@ -12,6 +12,7 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
 import org.openide.util.ContextAwareAction;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
@@ -27,6 +28,8 @@ import org.openide.util.RequestProcessor;
 @Messages("InitializeKnowledgeBaseAction.name=Initialize Uzzo Knowledge Base")
 public final class InitializeKnowledgeBaseAction extends AbstractAction implements ContextAwareAction {
 
+    static final String ICON = "ste/uzzo/nb/lamp.png";
+
     private final Project project;
     private final KnowledgeBaseContent content;
     private final FactsPrompt prompt;
@@ -41,6 +44,8 @@ public final class InitializeKnowledgeBaseAction extends AbstractAction implemen
 
     private InitializeKnowledgeBaseAction(Project project, KnowledgeBaseContent content, FactsPrompt prompt) {
         super(Bundle.InitializeKnowledgeBaseAction_name());
+        putValue("iconBase", ICON);
+        putValue(SMALL_ICON, ImageUtilities.loadImageIcon(ICON, false));
         this.project = project;
         this.content = content;
         this.prompt = prompt;

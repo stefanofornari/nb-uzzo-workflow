@@ -42,6 +42,14 @@ class InitializeKnowledgeBaseActionTest {
     }
 
     @Test
+    void has_the_lamp_icon() {
+        Action action = actionFor(project());
+
+        then(action.getValue("iconBase")).isEqualTo("ste/uzzo/nb/lamp.png");
+        then(action.getValue(Action.SMALL_ICON)).isNotNull();
+    }
+
+    @Test
     void enabled_without_a_knowledge_base() {
         then(actionFor(project()).isEnabled()).isTrue();
     }
