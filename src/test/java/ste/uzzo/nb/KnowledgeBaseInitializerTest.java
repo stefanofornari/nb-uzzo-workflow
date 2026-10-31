@@ -167,6 +167,30 @@ class KnowledgeBaseInitializerTest {
     }
 
     @Test
+    void fills_the_placeholders_of_the_articles_with_the_facts() throws IOException {
+        ProjectFacts facts = new ProjectFacts("My App", "1.2", null, "https://x/y", "21");
+
+        KnowledgeBaseInitializer.initialize(projectDir(), realContent(), facts);
+
+        String overview = Files.readString(tempDir.resolve("uzz/project/overview.md"));
+        then(overview).contains("**Name**: My App").contains("**Version**: 1.2")
+                .contains("[My App](https://x/y)").contains("[One paragraph describing");
+        then(Files.readString(tempDir.resolve("uzz/stories/scope.md")))
+                .contains("# Project Name: My App").contains("**Version:** 1.2");
+        then(Files.readString(tempDir.resolve("uzz/project/development_framework.md")))
+                .contains("Java 21").contains("`mvn clean install`").contains("`[RUN COMMAND]`");
+    }
+
+    @Test
+    void does_not_modify_the_skills_with_the_facts() throws IOException {
+        KnowledgeBaseContent content = new StubContent(Map.of("skills/kb/SKILL.md", "[PROJECT NAME]"));
+
+        KnowledgeBaseInitializer.initialize(projectDir(), content, new ProjectFacts("My App", null, null, null, null));
+
+        then(tempDir.resolve("uzz/skills/kb/SKILL.md")).hasContent("[PROJECT NAME]");
+    }
+
+    @Test
     void keeps_gitkeep_only_in_folders_left_empty() throws IOException {
         KnowledgeBaseInitializer.initialize(projectDir(), realContent());
 

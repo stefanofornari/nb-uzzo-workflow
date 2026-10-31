@@ -31,7 +31,6 @@ final class KnowledgeBaseInitializer {
      *         the latter case the partially created {@code uzz} is removed
      */
     @Messages({
-        "KnowledgeBaseInitializer.exists=Cannot initialize the knowledge base: {0} already exists.",
         "KnowledgeBaseInitializer.failed=Cannot create {0}: {1}"
     })
     static Result initialize(FileObject projectDir) throws IOException {
@@ -46,10 +45,13 @@ final class KnowledgeBaseInitializer {
     }
 
     static Result initialize(FileObject projectDir, KnowledgeBaseContent content) throws IOException {
-        FileObject existing = projectDir.getFileObject(UzzoKnowledgeBaseNodeFactory.FOLDER_NAME);
-        if (existing != null) {
-            throw new IOException(Bundle.KnowledgeBaseInitializer_exists(FileUtil.getFileDisplayName(existing)));
-        }
+        return initialize(projectDir, content, ProjectFacts.NONE);
+    }
+
+    /** As above, filling the placeholders of the generated articles with the given facts. */
+    static Result initialize(FileObject projectDir, KnowledgeBaseContent content, ProjectFacts facts)
+            throws IOException {
+        checkAbsent(projectDir);
 
         String target = FileUtil.getFileDisplayName(projectDir) + "/" + UzzoKnowledgeBaseNodeFactory.FOLDER_NAME;
         FileObject uzz = null;
@@ -95,7 +97,7 @@ final class KnowledgeBaseInitializer {
                         continue;
                     }
                     target = FileUtil.getFileDisplayName(uzz) + "/" + article;
-                    write(uzz, article, body.getBytes(StandardCharsets.UTF_8));
+                    write(uzz, article, facts.fill(body).getBytes(StandardCharsets.UTF_8));
                 }
             }
 
@@ -116,6 +118,15 @@ final class KnowledgeBaseInitializer {
                 }
             }
             throw new IOException(Bundle.KnowledgeBaseInitializer_failed(target, e.getMessage()), e);
+        }
+    }
+
+    /** Fails with a message naming the path when {@code uzz} already exists as a file or folder. */
+    @Messages("KnowledgeBaseInitializer.exists=Cannot initialize the knowledge base: {0} already exists.")
+    static void checkAbsent(FileObject projectDir) throws IOException {
+        FileObject existing = projectDir.getFileObject(UzzoKnowledgeBaseNodeFactory.FOLDER_NAME);
+        if (existing != null) {
+            throw new IOException(Bundle.KnowledgeBaseInitializer_exists(FileUtil.getFileDisplayName(existing)));
         }
     }
 

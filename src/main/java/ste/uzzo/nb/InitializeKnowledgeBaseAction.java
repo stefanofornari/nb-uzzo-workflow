@@ -29,26 +29,28 @@ public final class InitializeKnowledgeBaseAction extends AbstractAction implemen
 
     private final Project project;
     private final KnowledgeBaseContent content;
+    private final FactsPrompt prompt;
 
     public InitializeKnowledgeBaseAction() {
-        this(null, ClasspathKnowledgeBaseContent.of(InitializeKnowledgeBaseAction.class.getClassLoader()));
+        this(ClasspathKnowledgeBaseContent.of(InitializeKnowledgeBaseAction.class.getClassLoader()), FactsPanel::show);
     }
 
-    InitializeKnowledgeBaseAction(KnowledgeBaseContent content) {
-        this(null, content);
+    InitializeKnowledgeBaseAction(KnowledgeBaseContent content, FactsPrompt prompt) {
+        this(null, content, prompt);
     }
 
-    private InitializeKnowledgeBaseAction(Project project, KnowledgeBaseContent content) {
+    private InitializeKnowledgeBaseAction(Project project, KnowledgeBaseContent content, FactsPrompt prompt) {
         super(Bundle.InitializeKnowledgeBaseAction_name());
         this.project = project;
         this.content = content;
+        this.prompt = prompt;
         // an existing "uzz" file stays enabled so that the run reports the conflict
         setEnabled(project != null && !hasKnowledgeBase(project));
     }
 
     @Override
     public Action createContextAwareInstance(Lookup context) {
-        return new InitializeKnowledgeBaseAction(context.lookup(Project.class), content);
+        return new InitializeKnowledgeBaseAction(context.lookup(Project.class), content, prompt);
     }
 
     @Override
@@ -64,12 +66,17 @@ public final class InitializeKnowledgeBaseAction extends AbstractAction implemen
         });
     }
 
-    /** Initializes the knowledge base; returns a message to show, or null when everything went fine. */
+    /** Initializes the knowledge base; returns a message to show, or null when everything went fine or the user cancelled. */
     @Messages("InitializeKnowledgeBaseAction.incomplete=The knowledge base was created but is incomplete:\n{0}")
     NotifyDescriptor initialize(Project project) {
         try {
+            KnowledgeBaseInitializer.checkAbsent(project.getProjectDirectory());
+            ProjectFacts facts = prompt.ask(ProjectFacts.fromPom(project.getProjectDirectory()));
+            if (facts == null) {
+                return null;
+            }
             KnowledgeBaseInitializer.Result result =
-                    KnowledgeBaseInitializer.initialize(project.getProjectDirectory(), content);
+                    KnowledgeBaseInitializer.initialize(project.getProjectDirectory(), content, facts);
             if (result.incomplete().isEmpty()) {
                 return null;
             }

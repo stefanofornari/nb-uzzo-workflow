@@ -25,6 +25,13 @@ class InitializeKnowledgeBaseActionTest {
                 .createContextAwareInstance(Lookups.singleton(project));
     }
 
+    private static final FactsPrompt PROMPT_AS_IS = proposed -> proposed;
+
+    private static InitializeKnowledgeBaseAction action(FactsPrompt prompt) {
+        return new InitializeKnowledgeBaseAction(
+                ClasspathKnowledgeBaseContent.of(InitializeKnowledgeBaseActionTest.class.getClassLoader()), prompt);
+    }
+
     private Project project() {
         return new TestProject(FileUtil.toFileObject(tempDir.toFile()));
     }
@@ -63,7 +70,7 @@ class InitializeKnowledgeBaseActionTest {
 
     @Test
     void invoking_creates_the_knowledge_base() throws Exception {
-        NotifyDescriptor outcome = new InitializeKnowledgeBaseAction().initialize(project());
+        NotifyDescriptor outcome = action(PROMPT_AS_IS).initialize(project());
 
         then(outcome).isNull();
         then(tempDir.resolve("uzz/stories")).isDirectory();
@@ -74,7 +81,7 @@ class InitializeKnowledgeBaseActionTest {
     void failure_is_reported_as_an_error_naming_the_path() throws IOException {
         Path file = Files.writeString(tempDir.resolve("uzz"), "x");
 
-        NotifyDescriptor outcome = new InitializeKnowledgeBaseAction().initialize(project());
+        NotifyDescriptor outcome = action(PROMPT_AS_IS).initialize(project());
 
         then(outcome.getMessageType()).isEqualTo(NotifyDescriptor.ERROR_MESSAGE);
         then(outcome.getMessage().toString()).contains(file.toString());
@@ -94,10 +101,60 @@ class InitializeKnowledgeBaseActionTest {
             }
         };
 
-        NotifyDescriptor outcome = new InitializeKnowledgeBaseAction(unreadable).initialize(project());
+        NotifyDescriptor outcome = new InitializeKnowledgeBaseAction(unreadable, PROMPT_AS_IS).initialize(project());
 
         then(outcome.getMessageType()).isEqualTo(NotifyDescriptor.WARNING_MESSAGE);
         then(outcome.getMessage().toString()).contains("incomplete");
         then(tempDir.resolve("uzz/stories")).isDirectory();
+    }
+
+    private static final String POM = """
+            <project><artifactId>a</artifactId><name>Pom Name</name><version>3.1</version>
+              <description>From the pom.</description></project>""";
+
+    @Test
+    void the_dialog_is_proposed_the_facts_of_the_pom() throws IOException {
+        Files.writeString(tempDir.resolve("pom.xml"), POM);
+        ProjectFacts[] proposed = new ProjectFacts[1];
+
+        action(p -> {
+            proposed[0] = p;
+            return p;
+        }).initialize(project());
+
+        then(proposed[0]).isEqualTo(new ProjectFacts("Pom Name", "3.1", "From the pom.", null, null));
+    }
+
+    @Test
+    void edited_values_are_written_to_the_articles() throws IOException {
+        Files.writeString(tempDir.resolve("pom.xml"), POM);
+
+        action(p -> new ProjectFacts("Edited", p.version(), null, null, null)).initialize(project());
+
+        then(Files.readString(tempDir.resolve("uzz/project/overview.md")))
+                .contains("**Name**: Edited").contains("**Version**: 3.1").contains("[One paragraph describing");
+        then(Files.readString(tempDir.resolve("uzz/stories/scope.md"))).contains("# Project Name: Edited");
+    }
+
+    @Test
+    void cancelling_the_dialog_creates_nothing() throws IOException {
+        NotifyDescriptor outcome = action(p -> null).initialize(project());
+
+        then(outcome).isNull();
+        then(tempDir.resolve("uzz")).doesNotExist();
+    }
+
+    @Test
+    void an_existing_uzz_is_reported_without_asking_anything() throws IOException {
+        Files.writeString(tempDir.resolve("uzz"), "x");
+        boolean[] asked = new boolean[1];
+
+        NotifyDescriptor outcome = action(p -> {
+            asked[0] = true;
+            return p;
+        }).initialize(project());
+
+        then(asked[0]).isFalse();
+        then(outcome.getMessageType()).isEqualTo(NotifyDescriptor.ERROR_MESSAGE);
     }
 }
