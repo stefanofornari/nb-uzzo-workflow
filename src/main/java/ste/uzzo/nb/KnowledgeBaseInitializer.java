@@ -1,6 +1,9 @@
 package ste.uzzo.nb;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -22,7 +25,7 @@ final class KnowledgeBaseInitializer {
     /**
      * Creates {@code uzz} with its four sections below {@code projectDir}.
      *
-     * @return the new {@code uzz} folder
+     * @return the new {@code uzz} folder and what could not be seeded
      * @throws IOException with a message naming the offending path, when
      *         {@code uzz} already exists or something cannot be created; in
      *         the latter case the partially created {@code uzz} is removed
@@ -31,7 +34,18 @@ final class KnowledgeBaseInitializer {
         "KnowledgeBaseInitializer.exists=Cannot initialize the knowledge base: {0} already exists.",
         "KnowledgeBaseInitializer.failed=Cannot create {0}: {1}"
     })
-    static FileObject initialize(FileObject projectDir) throws IOException {
+    static Result initialize(FileObject projectDir) throws IOException {
+        return initialize(projectDir, ClasspathKnowledgeBaseContent.of(KnowledgeBaseInitializer.class.getClassLoader()));
+    }
+
+    /**
+     * @param root the new {@code uzz} folder
+     * @param incomplete what could not be seeded; empty when everything was
+     */
+    record Result(FileObject root, List<String> incomplete) {
+    }
+
+    static Result initialize(FileObject projectDir, KnowledgeBaseContent content) throws IOException {
         FileObject existing = projectDir.getFileObject(UzzoKnowledgeBaseNodeFactory.FOLDER_NAME);
         if (existing != null) {
             throw new IOException(Bundle.KnowledgeBaseInitializer_exists(FileUtil.getFileDisplayName(existing)));
@@ -45,6 +59,46 @@ final class KnowledgeBaseInitializer {
                 target = FileUtil.getFileDisplayName(uzz) + "/" + section;
                 uzz.createFolder(section);
             }
+            List<String> incomplete = new ArrayList<>();
+            List<String> paths = List.of();
+            try {
+                paths = content.paths();
+            } catch (IOException e) {
+                incomplete.add("skills: " + e.getMessage());
+            }
+            for (String path : paths) {
+                if (path.startsWith("skills/")) {
+                    target = FileUtil.getFileDisplayName(uzz) + "/" + path;
+                    validate(path);
+                    byte[] bytes;
+                    try {
+                        bytes = content.read(path);
+                    } catch (IOException e) {
+                        incomplete.add(path + ": " + e.getMessage());
+                        continue;
+                    }
+                    write(uzz, path, bytes);
+                }
+            }
+
+            String templates = null;
+            try {
+                templates = new String(content.read(KnowledgeBaseTemplates.PATH), StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                incomplete.add(KnowledgeBaseTemplates.PATH + ": " + e.getMessage());
+            }
+            if (templates != null) {
+                for (String article : KnowledgeBaseTemplates.ARTICLES) {
+                    String body = KnowledgeBaseTemplates.extract(templates, article);
+                    if (body == null) {
+                        incomplete.add(article + ": template not found");
+                        continue;
+                    }
+                    target = FileUtil.getFileDisplayName(uzz) + "/" + article;
+                    write(uzz, article, body.getBytes(StandardCharsets.UTF_8));
+                }
+            }
+
             for (String section : SECTIONS) {
                 FileObject folder = uzz.getFileObject(section);
                 if (folder.getChildren().length == 0) {
@@ -52,7 +106,7 @@ final class KnowledgeBaseInitializer {
                     folder.createData(GITKEEP);
                 }
             }
-            return uzz;
+            return new Result(uzz, List.copyOf(incomplete));
         } catch (IOException e) {
             if (uzz != null) {
                 try {
@@ -62,6 +116,24 @@ final class KnowledgeBaseInitializer {
                 }
             }
             throw new IOException(Bundle.KnowledgeBaseInitializer_failed(target, e.getMessage()), e);
+        }
+    }
+
+    private static void validate(String path) throws IOException {
+        for (String segment : path.split("/", -1)) {
+            if (segment.isEmpty() || segment.equals(".") || segment.equals("..")) {
+                throw new IOException("invalid path " + path);
+            }
+        }
+    }
+
+    private static void write(FileObject uzz, String path, byte[] bytes) throws IOException {
+        validate(path);
+        int slash = path.lastIndexOf('/');
+        FileObject folder = slash < 0 ? uzz : FileUtil.createFolder(uzz, path.substring(0, slash));
+        FileObject file = folder.createData(path.substring(slash + 1));
+        try (OutputStream out = file.getOutputStream()) {
+            out.write(bytes);
         }
     }
 }

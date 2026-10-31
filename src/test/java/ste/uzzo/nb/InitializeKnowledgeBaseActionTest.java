@@ -7,6 +7,7 @@ import javax.swing.Action;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.netbeans.api.project.Project;
+import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.ContextAwareAction;
 import org.openide.util.Lookup;
@@ -62,21 +63,41 @@ class InitializeKnowledgeBaseActionTest {
 
     @Test
     void invoking_creates_the_knowledge_base() throws Exception {
-        InitializeKnowledgeBaseAction action = new InitializeKnowledgeBaseAction();
-        Project project = project();
+        NotifyDescriptor outcome = new InitializeKnowledgeBaseAction().initialize(project());
 
-        String error = action.initialize(project);
-
-        then(error).isNull();
+        then(outcome).isNull();
         then(tempDir.resolve("uzz/stories")).isDirectory();
+        then(tempDir.resolve("uzz/skills/kb/SKILL.md")).exists();
     }
 
     @Test
-    void failure_is_returned_as_a_message_naming_the_path() throws IOException {
+    void failure_is_reported_as_an_error_naming_the_path() throws IOException {
         Path file = Files.writeString(tempDir.resolve("uzz"), "x");
 
-        String error = new InitializeKnowledgeBaseAction().initialize(project());
+        NotifyDescriptor outcome = new InitializeKnowledgeBaseAction().initialize(project());
 
-        then(error).contains(file.toString());
+        then(outcome.getMessageType()).isEqualTo(NotifyDescriptor.ERROR_MESSAGE);
+        then(outcome.getMessage().toString()).contains(file.toString());
+    }
+
+    @Test
+    void unreadable_content_is_reported_as_a_warning_about_the_incomplete_knowledge_base() {
+        KnowledgeBaseContent unreadable = new KnowledgeBaseContent() {
+            @Override
+            public java.util.List<String> paths() throws IOException {
+                throw new IOException("no content");
+            }
+
+            @Override
+            public byte[] read(String path) throws IOException {
+                throw new IOException("no content");
+            }
+        };
+
+        NotifyDescriptor outcome = new InitializeKnowledgeBaseAction(unreadable).initialize(project());
+
+        then(outcome.getMessageType()).isEqualTo(NotifyDescriptor.WARNING_MESSAGE);
+        then(outcome.getMessage().toString()).contains("incomplete");
+        then(tempDir.resolve("uzz/stories")).isDirectory();
     }
 }

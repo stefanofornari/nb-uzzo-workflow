@@ -28,21 +28,27 @@ import org.openide.util.RequestProcessor;
 public final class InitializeKnowledgeBaseAction extends AbstractAction implements ContextAwareAction {
 
     private final Project project;
+    private final KnowledgeBaseContent content;
 
     public InitializeKnowledgeBaseAction() {
-        this(null);
+        this(null, ClasspathKnowledgeBaseContent.of(InitializeKnowledgeBaseAction.class.getClassLoader()));
     }
 
-    private InitializeKnowledgeBaseAction(Project project) {
+    InitializeKnowledgeBaseAction(KnowledgeBaseContent content) {
+        this(null, content);
+    }
+
+    private InitializeKnowledgeBaseAction(Project project, KnowledgeBaseContent content) {
         super(Bundle.InitializeKnowledgeBaseAction_name());
         this.project = project;
+        this.content = content;
         // an existing "uzz" file stays enabled so that the run reports the conflict
         setEnabled(project != null && !hasKnowledgeBase(project));
     }
 
     @Override
     public Action createContextAwareInstance(Lookup context) {
-        return new InitializeKnowledgeBaseAction(context.lookup(Project.class));
+        return new InitializeKnowledgeBaseAction(context.lookup(Project.class), content);
     }
 
     @Override
@@ -51,21 +57,27 @@ public final class InitializeKnowledgeBaseAction extends AbstractAction implemen
             return;
         }
         RequestProcessor.getDefault().post(() -> {
-            String error = initialize(project);
-            if (error != null) {
-                DialogDisplayer.getDefault().notify(
-                        new NotifyDescriptor.Message(error, NotifyDescriptor.ERROR_MESSAGE));
+            NotifyDescriptor outcome = initialize(project);
+            if (outcome != null) {
+                DialogDisplayer.getDefault().notify(outcome);
             }
         });
     }
 
-    /** Initializes the knowledge base; returns an error message, or null on success. */
-    String initialize(Project project) {
+    /** Initializes the knowledge base; returns a message to show, or null when everything went fine. */
+    @Messages("InitializeKnowledgeBaseAction.incomplete=The knowledge base was created but is incomplete:\n{0}")
+    NotifyDescriptor initialize(Project project) {
         try {
-            KnowledgeBaseInitializer.initialize(project.getProjectDirectory());
-            return null;
+            KnowledgeBaseInitializer.Result result =
+                    KnowledgeBaseInitializer.initialize(project.getProjectDirectory(), content);
+            if (result.incomplete().isEmpty()) {
+                return null;
+            }
+            return new NotifyDescriptor.Message(
+                    Bundle.InitializeKnowledgeBaseAction_incomplete(String.join("\n", result.incomplete())),
+                    NotifyDescriptor.WARNING_MESSAGE);
         } catch (IOException e) {
-            return e.getMessage();
+            return new NotifyDescriptor.Message(e.getMessage(), NotifyDescriptor.ERROR_MESSAGE);
         }
     }
 
