@@ -56,4 +56,13 @@ class RefreshKnowledgeBaseActionTest {
         then(project).as("project child missing").isNotNull();
         return project;
     }
+
+    @Test
+    void the_refresh_action_shows_the_lamp_icon_in_the_popup_menu() throws IOException {
+        Path uzz = Files.createDirectories(tempDir.resolve("uzz"));
+        RefreshKnowledgeBaseAction action = new RefreshKnowledgeBaseAction(FileUtil.toFileObject(uzz.toFile()));
+
+        then(action.getPopupPresenter().getIcon()).isNotNull();
+        then(action.getPopupPresenter().getText()).isEqualTo("Refresh Knowledge Base");
+    }
 }
