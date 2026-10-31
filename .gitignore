@@ -35,3 +35,6 @@ hs_err_pid*
 # OS
 .DS_Store
 Thumbs.db
+
+# NetBeans per-user project settings
+nb-configuration.xml
