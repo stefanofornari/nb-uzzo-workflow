@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JMenuItem;
 import org.netbeans.api.project.Project;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -16,6 +17,7 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
+import org.openide.util.actions.Presenter;
 
 /**
  * Initializes the Uzzo knowledge base of a Maven project that has none. It is
@@ -26,7 +28,7 @@ import org.openide.util.RequestProcessor;
 @ActionRegistration(displayName = "#InitializeKnowledgeBaseAction.name", lazy = false)
 @ActionReference(path = "Projects/org-netbeans-modules-maven/Actions", position = 1500)
 @Messages("InitializeKnowledgeBaseAction.name=Initialize Uzzo Knowledge Base")
-public final class InitializeKnowledgeBaseAction extends AbstractAction implements ContextAwareAction {
+public final class InitializeKnowledgeBaseAction extends AbstractAction implements ContextAwareAction, Presenter.Popup {
 
     static final String ICON = "ste/uzzo/nb/lamp.png";
 
@@ -56,6 +58,12 @@ public final class InitializeKnowledgeBaseAction extends AbstractAction implemen
     @Override
     public Action createContextAwareInstance(Lookup context) {
         return new InitializeKnowledgeBaseAction(context.lookup(Project.class), content, prompt);
+    }
+
+    /** Needed for the icon to show next to the name in the popup menu. */
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return new JMenuItem(this);
     }
 
     @Override

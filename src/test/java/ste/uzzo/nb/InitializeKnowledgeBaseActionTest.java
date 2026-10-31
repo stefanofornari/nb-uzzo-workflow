@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.swing.Action;
+import javax.swing.JMenuItem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.netbeans.api.project.Project;
@@ -11,6 +12,7 @@ import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.ContextAwareAction;
 import org.openide.util.Lookup;
+import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.Lookups;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -47,6 +49,14 @@ class InitializeKnowledgeBaseActionTest {
 
         then(action.getValue("iconBase")).isEqualTo("ste/uzzo/nb/lamp.png");
         then(action.getValue(Action.SMALL_ICON)).isNotNull();
+    }
+
+    @Test
+    void the_popup_presenter_shows_the_icon_and_the_name() {
+        JMenuItem item = ((Presenter.Popup) actionFor(project())).getPopupPresenter();
+
+        then(item.getIcon()).isNotNull();
+        then(item.getText()).isEqualTo("Initialize Uzzo Knowledge Base");
     }
 
     @Test
