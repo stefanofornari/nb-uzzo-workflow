@@ -68,6 +68,7 @@ final class KnowledgeBaseInitializer {
     })
     static Result initialize(FileObject projectDir, KnowledgeBaseContent content, ProjectFacts facts)
             throws IOException {
+        projectDir.refresh();
         checkNotFile(projectDir);
         FileObject existing = projectDir.getFileObject(UzzoKnowledgeBaseNodeFactory.FOLDER_NAME);
         boolean fresh = existing == null;
@@ -76,6 +77,8 @@ final class KnowledgeBaseInitializer {
         List<String> incomplete = new ArrayList<>();
         Map<String, byte[]> wanted = collect(content, facts, incomplete, projectName);
         if (!fresh) {
+            // files may have been changed outside the IDE since it last looked
+            RefreshKnowledgeBaseAction.refreshRecursively(existing);
             checkConflicts(existing, wanted);
         }
 
