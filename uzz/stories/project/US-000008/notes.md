@@ -10,7 +10,7 @@ Technical notes for [Repair an Incomplete Knowledge Base and Report the Outcome]
 6. `OutcomeReport` turns a `Result` into the dialog: information, warning when content was incomplete, error for an `IOException`. Initialize now always shows a report (except on cancel).
 7. `RepairKnowledgeBaseAction` is offered on the Uzzo Knowledge Base node (always, so a complete KB reports "already complete"). It uses the pom facts as they are, without the dialog, since it cannot know beforehand whether anything will be created.
 
-8. The repair is also offered on the project node (`RepairKnowledgeBaseProjectAction`, enabled only when `uzz` is a folder, right below Initialize) and delegates to `RepairKnowledgeBaseAction`. Initialize, Repair and Refresh all show the lamp icon through a popup presenter.
+8. On the project node there is a single entry: `InitializeKnowledgeBaseAction` is "Initialize Uzzo Knowledge Base" while there is no `uzz` folder and becomes "Repair Uzzo Knowledge Base" (delegating to `RepairKnowledgeBaseAction`) once there is one. Initialize, Repair and Refresh all show the lamp icon through a popup presenter.
 
 ### Keywords
 - implementation-notes

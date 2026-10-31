@@ -20,9 +20,9 @@ import org.openide.util.RequestProcessor;
 import org.openide.util.actions.Presenter;
 
 /**
- * Initializes the Uzzo knowledge base of a Maven project that has none. It is
- * offered on the project node, since the Uzzo Knowledge Base node only exists
- * once the {@code uzz} folder does.
+ * Project node entry for the Uzzo knowledge base: "Initialize" while the
+ * project has no {@code uzz} folder, "Repair" (see
+ * {@link RepairKnowledgeBaseAction}) once it has.
  */
 @ActionID(category = "Project", id = "ste.uzzo.nb.InitializeKnowledgeBaseAction")
 @ActionRegistration(displayName = "#InitializeKnowledgeBaseAction.name", lazy = false)
@@ -33,6 +33,7 @@ public final class InitializeKnowledgeBaseAction extends AbstractAction implemen
     static final String ICON = "ste/uzzo/nb/lamp.png";
 
     private final Project project;
+    private final FileObject uzzDir;
     private final KnowledgeBaseContent content;
     private final FactsPrompt prompt;
 
@@ -45,14 +46,16 @@ public final class InitializeKnowledgeBaseAction extends AbstractAction implemen
     }
 
     private InitializeKnowledgeBaseAction(Project project, KnowledgeBaseContent content, FactsPrompt prompt) {
-        super(Bundle.InitializeKnowledgeBaseAction_name());
+        super(knowledgeBase(project) != null
+                ? Bundle.RepairKnowledgeBaseAction_name() : Bundle.InitializeKnowledgeBaseAction_name());
         putValue("iconBase", ICON);
         putValue(SMALL_ICON, ImageUtilities.loadImageIcon(ICON, false));
         this.project = project;
+        this.uzzDir = knowledgeBase(project);
         this.content = content;
         this.prompt = prompt;
         // an existing "uzz" file stays enabled so that the run reports the conflict
-        setEnabled(project != null && !hasKnowledgeBase(project));
+        setEnabled(project != null);
     }
 
     @Override
@@ -69,6 +72,10 @@ public final class InitializeKnowledgeBaseAction extends AbstractAction implemen
     @Override
     public void actionPerformed(ActionEvent event) {
         if (project == null) {
+            return;
+        }
+        if (uzzDir != null) {
+            new RepairKnowledgeBaseAction(uzzDir, content).actionPerformed(event);
             return;
         }
         RequestProcessor.getDefault().post(() -> {
@@ -93,8 +100,12 @@ public final class InitializeKnowledgeBaseAction extends AbstractAction implemen
         }
     }
 
-    private static boolean hasKnowledgeBase(Project project) {
+    /** The {@code uzz} folder of the project, or null when it has none. */
+    private static FileObject knowledgeBase(Project project) {
+        if (project == null) {
+            return null;
+        }
         FileObject uzz = project.getProjectDirectory().getFileObject(UzzoKnowledgeBaseNodeFactory.FOLDER_NAME);
-        return uzz != null && uzz.isFolder();
+        return uzz != null && uzz.isFolder() ? uzz : null;
     }
 }

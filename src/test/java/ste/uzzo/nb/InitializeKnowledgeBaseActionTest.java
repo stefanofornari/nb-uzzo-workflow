@@ -65,10 +65,14 @@ class InitializeKnowledgeBaseActionTest {
     }
 
     @Test
-    void disabled_with_a_knowledge_base() throws IOException {
+    void becomes_the_repair_action_with_a_knowledge_base() throws IOException {
         Files.createDirectories(tempDir.resolve("uzz"));
+        Action action = actionFor(project());
 
-        then(actionFor(project()).isEnabled()).isFalse();
+        then(action.getValue(Action.NAME)).isEqualTo("Repair Uzzo Knowledge Base");
+        then(action.isEnabled()).isTrue();
+        then(((Presenter.Popup) action).getPopupPresenter().getText()).isEqualTo("Repair Uzzo Knowledge Base");
+        then(((Presenter.Popup) action).getPopupPresenter().getIcon()).isNotNull();
     }
 
     @Test
