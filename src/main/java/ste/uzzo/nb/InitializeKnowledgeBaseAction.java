@@ -79,25 +79,17 @@ public final class InitializeKnowledgeBaseAction extends AbstractAction implemen
         });
     }
 
-    /** Initializes the knowledge base; returns a message to show, or null when everything went fine or the user cancelled. */
-    @Messages("InitializeKnowledgeBaseAction.incomplete=The knowledge base was created but is incomplete:\n{0}")
+    /** Initializes the knowledge base; returns the report to show, or null when the user cancelled. */
     NotifyDescriptor initialize(Project project) {
         try {
-            KnowledgeBaseInitializer.checkAbsent(project.getProjectDirectory());
+            KnowledgeBaseInitializer.checkNotFile(project.getProjectDirectory());
             ProjectFacts facts = prompt.ask(ProjectFacts.fromPom(project.getProjectDirectory()));
             if (facts == null) {
                 return null;
             }
-            KnowledgeBaseInitializer.Result result =
-                    KnowledgeBaseInitializer.initialize(project.getProjectDirectory(), content, facts);
-            if (result.incomplete().isEmpty()) {
-                return null;
-            }
-            return new NotifyDescriptor.Message(
-                    Bundle.InitializeKnowledgeBaseAction_incomplete(String.join("\n", result.incomplete())),
-                    NotifyDescriptor.WARNING_MESSAGE);
+            return OutcomeReport.of(KnowledgeBaseInitializer.initialize(project.getProjectDirectory(), content, facts));
         } catch (IOException e) {
-            return new NotifyDescriptor.Message(e.getMessage(), NotifyDescriptor.ERROR_MESSAGE);
+            return OutcomeReport.failure(e);
         }
     }
 

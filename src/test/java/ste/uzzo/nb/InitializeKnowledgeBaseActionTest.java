@@ -90,7 +90,8 @@ class InitializeKnowledgeBaseActionTest {
     void invoking_creates_the_knowledge_base() throws Exception {
         NotifyDescriptor outcome = action(PROMPT_AS_IS).initialize(project());
 
-        then(outcome).isNull();
+        then(outcome.getMessageType()).isEqualTo(NotifyDescriptor.INFORMATION_MESSAGE);
+        then(outcome.getMessage().toString()).contains("created").contains("project/overview.md");
         then(tempDir.resolve("uzz/stories")).isDirectory();
         then(tempDir.resolve("uzz/skills/kb/SKILL.md")).exists();
     }

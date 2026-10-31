@@ -35,7 +35,7 @@ class KnowledgeBaseInitializerTest {
         return ClasspathKnowledgeBaseContent.of(KnowledgeBaseInitializerTest.class.getClassLoader());
     }
 
-    private static final class StubContent implements KnowledgeBaseContent {
+    static final class StubContent implements KnowledgeBaseContent {
         private final Map<String, String> files;
 
         StubContent(Map<String, String> files) {
@@ -93,17 +93,6 @@ class KnowledgeBaseInitializerTest {
                 .isInstanceOf(IOException.class)
                 .hasMessageContaining(file.toString());
         then(Files.readString(file)).isEqualTo("mine");
-    }
-
-    @Test
-    void refuses_to_run_when_the_knowledge_base_already_exists() throws IOException {
-        Files.createDirectories(tempDir.resolve("uzz/library"));
-
-        assertThatThrownBy(() -> KnowledgeBaseInitializer.initialize(projectDir(), noContent()))
-                .isInstanceOf(IOException.class)
-                .hasMessageContaining(tempDir.resolve("uzz").toString());
-        then(tempDir.resolve("uzz/library")).isDirectory();
-        then(tempDir.resolve("uzz/stories")).doesNotExist();
     }
 
     @Test

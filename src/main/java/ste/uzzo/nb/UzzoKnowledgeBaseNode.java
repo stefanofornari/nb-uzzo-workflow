@@ -20,6 +20,7 @@ final class UzzoKnowledgeBaseNode extends FilterNode {
     private static final String ICON = "ste/uzzo/nb/lamp.png";
 
     private final Action refreshAction;
+    private final Action repairAction;
 
     @Messages("UzzoKnowledgeBaseNode.displayName=Uzzo Knowledge Base")
     UzzoKnowledgeBaseNode(FileObject uzzDir) {
@@ -37,6 +38,7 @@ final class UzzoKnowledgeBaseNode extends FilterNode {
             }
         });
         this.refreshAction = new RefreshKnowledgeBaseAction(uzzDir);
+        this.repairAction = new RepairKnowledgeBaseAction(uzzDir);
         disableDelegation(DELEGATE_SET_DISPLAY_NAME | DELEGATE_GET_DISPLAY_NAME);
         super.setDisplayName(Bundle.UzzoKnowledgeBaseNode_displayName());
     }
@@ -44,8 +46,9 @@ final class UzzoKnowledgeBaseNode extends FilterNode {
     @Override
     public Action[] getActions(boolean context) {
         Action[] actions = super.getActions(context);
-        Action[] result = Arrays.copyOf(actions, actions.length + 1);
-        result[actions.length] = refreshAction;
+        Action[] result = Arrays.copyOf(actions, actions.length + 2);
+        result[actions.length] = repairAction;
+        result[actions.length + 1] = refreshAction;
         return result;
     }
 
