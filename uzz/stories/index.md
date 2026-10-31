@@ -16,6 +16,7 @@
 | project/US-000006 | Seed the Knowledge Base from the Uzzo Workflow Distribution | DONE |
 | project/US-000007 | Pre-fill Project Facts from the Maven Project | TODO |
 | project/US-000008 | Repair an Incomplete Knowledge Base and Report the Outcome | TODO |
+| project/US-000009 | Start Coding Standard and Development Framework from the Project Type | TODO |
 
 ### Keywords
 - stories

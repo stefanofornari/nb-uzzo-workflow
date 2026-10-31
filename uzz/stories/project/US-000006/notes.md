@@ -9,7 +9,7 @@ Technical notes for [Seed the Knowledge Base from the Uzzo Workflow Distribution
 5. Content problems do not abort: the skeleton is still created and `Result.incomplete()` lists what is missing; the action shows it as a warning. Only I/O failures while writing roll back `uzz`.
 6. Paths with empty, `.` or `..` segments are rejected to avoid escaping `uzz`.
 7. `.gitkeep` is added last, only to folders still empty (`library`).
-8. Known follow-up: the stale `project/` and `stories/` files in `uzzo-workflow/src/main/uzz` should be cleaned up upstream.
+8. The stale `project/` and `stories/` files formerly in `uzzo-workflow/src/main/uzz` were removed upstream; the distribution now ships only `skills/**`.
 
 ### Keywords
 - implementation-notes
