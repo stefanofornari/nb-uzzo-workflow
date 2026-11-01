@@ -1,7 +1,7 @@
-# nb-uzzo-workflow
+# Uzzo Workflow for Netbeans
 
-A NetBeans module that surfaces a project's top-level `uzz` directory in the
-Projects tree as **Uzzo Knowledge Base**.
+A Netbeans plugin that brings AI-based [Uzzo Development Workflow](https://github.com/stefanofornari/uzzo-workflow)
+into Netbeans.
 
 ## Features
 
@@ -13,9 +13,6 @@ Projects tree as **Uzzo Knowledge Base**.
   the `Projects/<type>/Nodes` extension point: Maven, Java SE, Java module, Ant
   freeform, Gradle, web, PHP, Java EE, and Ant-based API support. Project types
   with a closed logical view cannot be extended by a module.
-- **Section icons** – the top-level folders `library`, `project`, `skills` and
-  `stories` get their own [Ikonli](https://kordamp.org/ikonli/) Material Design
-  Icons 2 icons. Any other folder is shown as a plain folder.
 - **Dedicated deck** – documents opened from inside `uzz` are docked into a
   separate editor deck on the right of the IDE instead of the central editor deck.
 - **External changes** – the knowledge base is refreshed when a folder is
@@ -25,6 +22,16 @@ Projects tree as **Uzzo Knowledge Base**.
   (`Thumbs.db`, `desktop.ini`), editor files (`*~`, `*.swp`, `*.swo`, `*.swx`,
   `.#*`, `#*#`) and temporary/backup files (`*.tmp`, `*.bak`) are omitted from
   the tree. They stay on disk and remain available to other tools.
+- **Initialize Knowledge Base** – an "Initialize Uzzo Knowledge Base" action on a
+  Maven project without an `uzz` folder scaffolds `uzz/{library,project,skills,stories}`,
+  seeds the workflow skills and seed articles from the `uzzo-workflow-kb` dependency,
+  and pre-fills project facts (name, version, summary, repository, Java release)
+  from the `pom.xml` through an editable confirmation dialog. Runs off the EDT and
+  is additive: never overwrites existing content.
+- **Repair Knowledge Base** – an "Repair Uzzo Knowledge Base" action on an existing
+  (possibly incomplete) Uzzo Knowledge Base node completes the missing structure,
+  reports created, skipped, placeholder and incomplete items, and leaves existing
+  content untouched. A complete knowledge base is reported as already complete.
 
 ## Requirements
 
