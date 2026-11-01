@@ -1,9 +1,9 @@
 # Project Name: Uzzo Workflow for Netbeans
-**Version:** 1.0-SNAPSHOT
+**Version:** 0.0.0-SNAPSHOT
 
 ## Overall Description
 
-A NetBeans module that integrates the Uzzo knowledge base into the IDE for Maven projects. It surfaces the project's top-level `uzz` directory in the Projects tree, decorates the knowledge base sections, and redirects documents opened from the knowledge base into a dedicated editor deck.
+A NetBeans module that integrates the Uzzo knowledge base into the IDE for NetBeans projects. Whenever a project contains a top-level `uzz` directory, it surfaces that directory in the Projects tree, decorates the knowledge base sections, and redirects documents opened from the knowledge base into a dedicated editor deck.
 
 Functional domains:
 - **Knowledge Base Node**: surface the project's `uzz` folder in the NetBeans logical view and keep it in sync with the file system.
@@ -13,7 +13,7 @@ Functional domains:
 ## In-Scope Capabilities
 
 * **Knowledge Base Node**:
-  - [ ] Show an **Uzzo Knowledge Base** node for Maven projects that contain a top-level `uzz` folder.
+  - [ ] Show an **Uzzo Knowledge Base** node for NetBeans projects that contain a top-level `uzz` folder, for every project type whose logical view supports `NodeFactory` extensions.
   - [ ] Add, remove, and update the node when the `uzz` folder is created, deleted, or renamed.
   - [ ] Refresh the knowledge base from the Projects view so content created or deleted outside NetBeans becomes visible.
   - [ ] Hide meta, OS, editor, and temporary files from the knowledge base tree.
@@ -34,7 +34,7 @@ Functional domains:
 ## Technical Context & Infrastructure
 
 * **Development Toolchain**: Java 17 + Maven, NetBeans Platform `RELEASE280`, Ikonli 12.3.1, JUnit 5
-* **Target Systems/Platforms**: NetBeans IDE (module packaged as `nbm`), Maven projects
+* **Target Systems/Platforms**: NetBeans IDE (module packaged as `nbm`), NetBeans projects with an extensible logical view (Maven, Java SE, Java module, Ant freeform, Gradle, web, PHP, Java EE, Ant-based API support)
 * **Project Reference Docs**:
   - Project Overview: `uzz/project/overview.md`
   - Coding Standard: `uzz/project/coding_standard.md`

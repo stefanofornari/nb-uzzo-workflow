@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2026 the original author or authors from the Uzzo and Uzzo Workflow project
+  (https://stefanofornari.github.io/uzzo-workflow).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -6,10 +22,33 @@
 
     <groupId>org.uzzo</groupId>
     <artifactId>nb-uzzo-workflow</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.0-SNAPSHOT</version>
     <packaging>nbm</packaging>
 
     <name>Uzzo Workflow for Netbeans</name>
+    <description><![CDATA[
+        <html>
+        <p>Brings the Uzzo Workflow and Knowledge Base into NetBeans projects.</p>
+        <p>Uzzo is an AI Development Workflow based on three main interactive activities:</p>
+        <ol>
+            <li><b>Scoping</b> - analyzes an idea, feature request, requirement, or user story
+                and refines it until the boundaries of what you want to do are solid,
+                if still high-level.</li>
+            <li><b>Story generation</b> - uses the available information and scope to produce
+                INVEST-compliant user stories that make each piece of a feature easy to
+                understand and track.</li>
+            <li><b>Coding</b> - develops a user story from the scope, the user story, project
+                information, the technology stack, and the coding standard.</li>
+        </ol>
+        <p>All this information is structured in the Uzzo Knowledge Base, which this module
+            brings into the project tree.</p>
+        <p>The module adds a top-level <b>Uzzo Knowledge Base</b> folder whenever the project
+            contains a top-level <tt>uzz</tt> folder, opens knowledge base documents in a
+            separate editor deck, and keeps the tree in sync with file-system changes, both
+            automatically and on demand.</p>
+        </html>
+    ]]></description>
+    <url>https://github.com/stefanofornari/nb-uzzo-workflow</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,7 +57,31 @@
         <ikonli.version>12.3.1</ikonli.version>
         <junit.version>5.10.2</junit.version>
         <assertj.version>3.27.7</assertj.version>
+        <project.license.name>Apache License, Version 2.0</project.license.name>
+        <project.license.url>https://www.apache.org/licenses/LICENSE-2.0.txt</project.license.url>
+        <project.developer.id>stefanofornari</project.developer.id>
+        <project.developer.name>Stefano Fornari</project.developer.name>
+        <project.developer.email>stefano.fornari@gmail.com</project.developer.email>
+        <project.developer.timezone>Europe/Rome</project.developer.timezone>
     </properties>
+
+    <licenses>
+        <license>
+            <name>${project.license.name}</name>
+            <url>${project.license.url}</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>stefanofornari</id>
+            <name>Stefano Fornari</name>
+            <email>stefano.fornari@gmail.com</email>
+            <timezone>Europe/Rome</timezone>
+        </developer>
+    </developers>
+
 
     <dependencies>
         <dependency>
@@ -118,6 +181,8 @@
                     <publicPackages>
                         <publicPackage>ste.uzzo.nb</publicPackage>
                     </publicPackages>
+                    <licenseName>${project.license.name}</licenseName>
+                    <licenseFile>${project.basedir}/LICENSE</licenseFile>
                 </configuration>
             </plugin>
             <plugin>
@@ -141,6 +206,49 @@
                     </archive>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.7.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                    <excludeArtifacts>
+                        <excludeArtifact>lazyjava-examples</excludeArtifact>
+                    </excludeArtifacts>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.4</version>
+                <configuration>
+                    <skip>true</skip> <!-- we use central instead -->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <scm>
+        <connection>scm:git:https://github.com/stefanofornari/nb-uzzo-workflow.git</connection>
+        <developerConnection>scm:git:git@github.com:stefanofornari/nb-uzzo-workflow.git</developerConnection>
+        <url>https://github.com/stefanofornari/nb-uzzo-workflow</url>
+    </scm>
+
 </project>
