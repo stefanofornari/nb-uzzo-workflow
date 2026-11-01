@@ -1,1 +1,2 @@
+OpenIDE-Module-Short-Description: Brings the Uzzo Workflow and Knowledge Base into NetBeans projects.
 OpenIDE-Module-Layer: ste/uzzo/nb/layer.xml

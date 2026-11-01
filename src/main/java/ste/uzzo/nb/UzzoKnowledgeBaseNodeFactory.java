@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 the original author or authors from the Uzzo and Uzzo Workflow project
+ * (https://stefanofornari.github.io/uzzo-workflow).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ste.uzzo.nb;
 
 import java.util.Collections;
@@ -17,9 +33,32 @@ import org.openide.util.ChangeSupport;
 
 /**
  * Adds the "Uzzo Knowledge Base" node (the project's top-level "uzz" folder)
- * to the logical view of Maven projects.
+ * to the logical view of NetBeans projects.
+ *
+ * <p>{@link NodeFactory.Registration} has no wildcard: a node factory is only
+ * consulted by the project types whose logical view is composed from a
+ * {@code Projects/&lt;type&gt;/Nodes} folder. The list below covers the project
+ * types shipped with NetBeans that expose that extension point. A project type
+ * missing from the list has a closed logical view and cannot be extended this
+ * way; add its id here if it starts supporting {@code NodeFactory}s.</p>
  */
-@NodeFactory.Registration(projectType = "org-netbeans-modules-maven", position = 50)
+@NodeFactory.Registration(
+        projectType = {
+            "org-netbeans-modules-maven",
+            "org-netbeans-modules-java-j2seproject",
+            "org-netbeans-modules-java-j2semodule",
+            "org-netbeans-modules-ant-freeform",
+            "org-netbeans-modules-gradle",
+            "org-netbeans-modules-web-project",
+            "org-netbeans-modules-web-clientproject",
+            "org-netbeans-modules-php-project",
+            "org-netbeans-modules-j2ee-clientproject",
+            "org-netbeans-modules-j2ee-ejbjarproject",
+            "org-netbeans-modules-j2ee-earproject",
+            "org-netbeans-modules-apisupport-project",
+            "org-netbeans-modules-apisupport-project-suite"
+        },
+        position = 50)
 public final class UzzoKnowledgeBaseNodeFactory implements NodeFactory {
 
     static final String FOLDER_NAME = "uzz";

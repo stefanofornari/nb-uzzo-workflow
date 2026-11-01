@@ -1,15 +1,18 @@
 # nb-uzzo-workflow
 
-A NetBeans module that surfaces a Maven project's top-level `uzz` directory in the
+A NetBeans module that surfaces a project's top-level `uzz` directory in the
 Projects tree as **Uzzo Knowledge Base**.
 
 ## Features
 
-- **Knowledge Base node** – the `uzz` folder of a Maven project appears in the
-  logical view, just above the source folders, with an Aladdin's lamp icon. It
-  behaves like any other folder (open, create, rename, delete, drag and drop) and
-  follows file-system changes. If `uzz` is created or removed, the node appears or
-  disappears.
+- **Knowledge Base node** – the `uzz` folder of a project appears in the logical
+  view, just above the source folders, with an Aladdin's lamp icon. It behaves
+  like any other folder (open, create, rename, delete, drag and drop) and follows
+  file-system changes. If `uzz` is created or removed, the node appears or
+  disappears. The node is contributed to every NetBeans project type that exposes
+  the `Projects/<type>/Nodes` extension point: Maven, Java SE, Java module, Ant
+  freeform, Gradle, web, PHP, Java EE, and Ant-based API support. Project types
+  with a closed logical view cannot be extended by a module.
 - **Section icons** – the top-level folders `library`, `project`, `skills` and
   `stories` get their own [Ikonli](https://kordamp.org/ikonli/) Material Design
   Icons 2 icons. Any other folder is shown as a plain folder.
@@ -37,4 +40,8 @@ mvn clean package
 
 Then in NetBeans: *Tools → Plugins → Downloaded → Add Plugins…* and select
 `target/nb-uzzo-workflow-*.nbm`.
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).
 
