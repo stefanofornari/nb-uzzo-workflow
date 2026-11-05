@@ -1,0 +1,37 @@
+title: Uzzo Workflow for NetBeans
+description: Bring the Uzzo Workflow and Knowledge Base into your NetBeans projects
+url: https://stefanofornari.github.io
+baseurl: /nb-uzzo-workflow
+
+# GitHub Pages builds this natively; the theme is fetched at build time.
+remote_theme: just-the-docs/just-the-docs
+plugins:
+  - jekyll-remote-theme
+
+color_scheme: light
+search_enabled: true
+heading_anchors: true
+
+callouts:
+  screenshot:
+    title: Screenshot
+    color: blue
+  todo:
+    title: To be confirmed
+    color: yellow
+
+aux_links:
+  Uzzo Workflow:
+    - https://stefanofornari.github.io/uzzo-workflow/
+  GitHub:
+    - https://github.com/stefanofornari/nb-uzzo-workflow
+aux_links_new_tab: true
+
+gh_edit_link: true
+gh_edit_link_text: Edit this page on GitHub
+gh_edit_repository: https://github.com/stefanofornari/nb-uzzo-workflow
+gh_edit_branch: main
+gh_edit_source: docs
+gh_edit_view_mode: edit
+
+footer_content: Copyright &copy; 2026 the Uzzo Workflow authors. Distributed under the <a href="https://github.com/stefanofornari/nb-uzzo-workflow/blob/main/LICENSE">Apache License 2.0</a>.
