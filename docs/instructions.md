@@ -22,42 +22,18 @@ has an Uzzo Knowledge Base (KB) in it. It takes about ten minutes.
 > says JDK 17+.
 {: .todo }
 
-## 1. Download the plugin
-
-1. Open the [releases page](https://github.com/stefanofornari/nb-uzzo-workflow/releases).
-2. Under **Assets** of the latest release, download the `.nbm` file
-   (`nb-uzzo-workflow-<version>.nbm`).
-
-> No release has been published yet. Until then, build the plugin yourself:
-> clone the repository and run `mvn clean package`. The `.nbm` is created in
-> `target/`. Replace this note once the first release is out.
-{: .todo }
-
-> Screenshot: the releases page with the `.nbm` asset highlighted.
->
-> `![Releases page](assets/images/instructions/01-download.png)`
-{: .screenshot }
-
-## 2. Install the plugin in NetBeans
+## 1. Install the plugin in NetBeans
 
 1. In NetBeans, open **Tools → Plugins**.
-2. Select the **Downloaded** tab and click **Add Plugins...**.
-3. Pick the `.nbm` file, then click **Install**.
+2. Select the **Available Plugins** tab and select **Uzzo Workflow for NetBeans**.
+3. Click **Install**.
 4. Follow the installer: accept the license and, if prompted, trust the unsigned
    plugin.
-5. Restart NetBeans when asked.
+5. Restart NetBeans if asked.
 
-> Screenshot: the **Downloaded** tab with the plugin added.
->
-> `![Plugins dialog](assets/images/instructions/02-plugins-dialog.png)`
-{: .screenshot }
+![Plugin installation](images/01-plugins-dialog.png)
 
-> Screenshot: the installer's final page, before the restart.
->
-> `![Install complete](assets/images/instructions/03-install-complete.png)`
-{: .screenshot }
-
-## 3. Create a dummy project
+## 1. Create a dummy project
 
 You only need a project to hold the knowledge base. The initialization action is
 available on Maven projects, so create a small one.
@@ -67,16 +43,6 @@ available on Maven projects, so create a small one.
 3. Name it `uzzo-demo`, pick a location, and keep the default Group Id and
    Version. Click **Finish**.
 4. The project appears in the **Projects** window.
-
-> Screenshot: the **New Project** wizard with *Java Application* selected.
->
-> `![New project wizard](assets/images/instructions/04-new-project.png)`
-{: .screenshot }
-
-> Screenshot: the new `uzzo-demo` project in the **Projects** window.
->
-> `![Projects window](assets/images/instructions/05-project-created.png)`
-{: .screenshot }
 
 ## 4. Initialize the knowledge base
 
@@ -91,21 +57,8 @@ available on Maven projects, so create a small one.
 Initialization is additive: it never overwrites or deletes existing files, so it
 is safe to run on a project that already has some content.
 
-> Screenshot: the project's right-click menu with **Initialize Uzzo Knowledge
-> Base**.
->
-> `![Initialize action](assets/images/instructions/06-init-action.png)`
-{: .screenshot }
-
-> Screenshot: the confirmation dialog with the project facts.
->
-> `![Facts dialog](assets/images/instructions/07-facts-dialog.png)`
-{: .screenshot }
-
-> Screenshot: the report shown when initialization completes.
->
-> `![Outcome report](assets/images/instructions/08-outcome-report.png)`
-{: .screenshot }
+![Initialize action](images/02-init-action.png) ![Initialize action](images/03-facts-dialog.png)
+![Outcome report](images/04-outcome-report.png)`
 
 ## 5. Explore the knowledge base
 
