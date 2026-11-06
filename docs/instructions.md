@@ -76,21 +76,12 @@ In the **Projects** window, the folder shows as the **Uzzo Knowledge Base** node
 with an Aladdin's lamp icon, just above the source folders. Expand it to browse
 the seeded workflow skills and articles.
 
-> Screenshot: the **Uzzo Knowledge Base** node expanded in the **Projects**
-> window.
->
-> `![Uzzo Knowledge Base node](assets/images/instructions/09-kb-node.png)`
-{: .screenshot }
-
 Open a document, for example one under `project/`. It opens in a separate editor
 deck on the right of the IDE, so the knowledge base stays next to your code.
 Values the initializer could not know are bracketed placeholders such as
 `[PROJECT NAME]`: replace them as you go.
 
-> Screenshot: a knowledge base document open in the right-hand deck.
->
-> `![Right-hand deck](assets/images/instructions/10-right-deck.png)`
-{: .screenshot }
+![Right-hand deck](images/05-fullscreen.png)
 
 ## Keeping it in sync
 
