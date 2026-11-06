@@ -56,6 +56,7 @@ is safe to run on a project that already has some content.
 
 ![Initialize action](images/02-init-action.png) ![Initialize action](images/03-facts-dialog.png)
 ![Outcome report](images/04-outcome-report.png)`
+{: .screenshot }
 
 ## 5. Explore the knowledge base
 
@@ -79,6 +80,7 @@ Values the initializer could not know are bracketed placeholders such as
 `[PROJECT NAME]`: replace them as you go.
 
 ![Right-hand deck](images/05-fullscreen.png)
+{: .screenshot }
 
 ## Keeping it in sync
 
