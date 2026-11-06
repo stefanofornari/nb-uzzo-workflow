@@ -18,10 +18,6 @@ has an Uzzo Knowledge Base (KB) in it. It takes about ten minutes.
 - JDK 21 or later
 - Maven (the Maven bundled with NetBeans is fine)
 
-> Confirm the minimum JDK. The plugin is compiled for Java 21, while the README
-> says JDK 17+.
-{: .todo }
-
 ## 1. Install the plugin in NetBeans
 
 1. In NetBeans, open **Tools → Plugins**.
@@ -32,6 +28,7 @@ has an Uzzo Knowledge Base (KB) in it. It takes about ten minutes.
 5. Restart NetBeans if asked.
 
 ![Plugin installation](images/01-plugins-dialog.png)
+{: .screenshot }
 
 ## 1. Create a dummy project
 
